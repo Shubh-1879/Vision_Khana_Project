@@ -7,4 +7,4 @@ __pycache__/
 dataset/
 dataset/khana/
 *.log
-pretrained_weights/
+pretrained_weights/step2_object_detection/thali_detection/models/*.pth

@@ -13,12 +13,14 @@ import json
 from datetime import datetime
 from evaluate_model import evaluate_on_test_images
 
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
 def load_best_models():
     """Load the best trained ResNet50 model"""
     models = {}
 
     # Load ResNet50 model
-    resnet_path = os.path.expanduser('~/Vision_Khana_Project/best_model_resnet.pth')
+    resnet_path = os.path.join(root_dir, 'step1_classification', 'best_model_resnet.pth')
     if os.path.exists(resnet_path):
         print("Loading ResNet50 model...")
         # Recreate ResNet50 architecture and load state_dict
@@ -46,7 +48,7 @@ def analyze_training_logs():
     results = {}
 
     # Check ResNet50 logs
-    resnet_log = os.path.expanduser('~/Vision_Khana_Project/training_output_resnet.log')
+    resnet_log = os.path.join(root_dir, 'step1_classification', 'training_output_resnet.log')
     if os.path.exists(resnet_log):
         with open(resnet_log, 'r') as f:
             content = f.read()
@@ -110,21 +112,21 @@ def generate_report():
         return
 
     # Check for test images
-    test_images_dir = os.path.expanduser('~/Vision_Khana_Project/test_images/')
+    test_images_dir = os.path.join(root_dir, 'step1_classification', 'test_images')
     if os.path.exists(test_images_dir):
         test_images = [os.path.join(test_images_dir, f)
                       for f in os.listdir(test_images_dir)
                       if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
     else:
         test_images = []
-        print("⚠️  No test images found in ~/Vision_Khana_Project/test_images/")
+        print(f"⚠️  No test images found in {os.path.join(root_dir, 'step1_classification', 'test_images')}")
         print("   Please add 20-30 test images for evaluation")
 
     if test_images:
         print(f"Found {len(test_images)} test images")
 
         # Load class names
-        data_path = os.path.expanduser('~/Vision_Khana_Project/dataset/khana/')
+        data_path = os.path.join(root_dir, 'dataset', 'khana')
         if os.path.exists(data_path):
             from torchvision.datasets import ImageFolder
             dataset = ImageFolder(root=data_path)
@@ -142,7 +144,7 @@ def generate_report():
         submission = prepare_leaderboard_submission(training_results, test_results)
 
         # Save submission
-        submission_file = os.path.expanduser('~/Vision_Khana_Project/leaderboard_submission.json')
+        submission_file = os.path.join(root_dir, 'step1_classification', 'leaderboard_submission.json')
         with open(submission_file, 'w') as f:
             json.dump(submission, f, indent=2)
 
@@ -158,7 +160,7 @@ def generate_report():
     if success_count > 0:
         print("✅ Step 1 COMPLETE: Achieved >91% validation accuracy")
         print("   → Proceed to Step 2: Object Detection")
-        print("   → Run: python setup_object_detection.py")
+        print("   → Run: python ../step2_object_detection/setup_object_detection.py")
     else:
         print("❌ Step 1 INCOMPLETE: Below 91% baseline")
         print("   → Increase epochs, adjust learning rate, or try different architecture")

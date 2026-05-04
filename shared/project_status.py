@@ -20,10 +20,10 @@ def get_project_status():
                 "status": "COMPLETED",
                 "models": {
                     "resnet50_finetune": {
-                        "script": "khana_classification_resnet.py",
-                        "job_script": "run_resnet.sh",
-                        "logs": ["training_output_resnet.log", "training_error_resnet.log"],
-                        "model_file": "best_model_resnet.pth",
+                        "script": "step1_classification/khana_classification_resnet.py",
+                        "job_script": "step1_classification/run_resnet.sh",
+                        "logs": ["step1_classification/training_output_resnet.log", "step1_classification/training_error_resnet.log"],
+                        "model_file": "step1_classification/best_model_resnet.pth",
                         "status": "SUCCESS",
                         "validation_accuracy": 91.15
                     }
@@ -44,8 +44,8 @@ def get_project_status():
                     "COCO-format bounding box annotations",
                     "80 food class labels"
                 ],
-                "setup_script": "setup_object_detection.py",
-                "dataset_structure": "~/Vision_Khana_Project/thali_detection/",
+                "setup_script": "step2_object_detection/setup_object_detection.py",
+                "dataset_structure": "~/Vision_Khana_Project/step2_object_detection/thali_detection/",
                 "model": "Faster R-CNN with ResNet50 backbone",
                 "next_steps": [
                     "Collect/prepare thali images",
@@ -119,7 +119,8 @@ def save_status_report():
     """Save current project status to JSON file"""
     status = get_project_status()
 
-    status_file = os.path.expanduser('~/Vision_Khana_Project/project_status.json')
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    status_file = os.path.join(root_dir, 'project_status.json')
     with open(status_file, 'w') as f:
         json.dump(status, f, indent=2)
 

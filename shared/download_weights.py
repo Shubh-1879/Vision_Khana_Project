@@ -5,8 +5,11 @@ import torch
 import torchvision
 import os
 
+# Resolve repository root relative to this script
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
 # Create directory for weights
-weights_dir = os.path.expanduser('~/Vision_Khana_Project/pretrained_weights/')
+weights_dir = os.path.join(root_dir, 'pretrained_weights')
 os.makedirs(weights_dir, exist_ok=True)
 
 print("Downloading ResNet50 pretrained weights...")

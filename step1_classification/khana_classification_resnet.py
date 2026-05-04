@@ -35,8 +35,11 @@ def safe_pil_loader(path):
         # Return a blank image as fallback
         return Image.new('RGB', (224, 224), color=(128, 128, 128))
 
+# Resolve repository root relative to this script
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
 # Set data path
-data_path = os.path.expanduser('~/Vision_Khana_Project/dataset/khana/')
+data_path = os.path.join(root_dir, 'dataset', 'khana')
 
 # Define transforms
 transform = transforms.Compose([
@@ -67,7 +70,7 @@ num_classes = len(dataset.classes)
 model = torchvision.models.resnet50(pretrained=False)  # Load architecture only
 
 # Load pretrained weights from local file
-weights_path = os.path.expanduser('~/Vision_Khana_Project/pretrained_weights/resnet50-19c8e357.pth')
+weights_path = os.path.join(root_dir, 'pretrained_weights', 'resnet50-19c8e357.pth')
 if os.path.exists(weights_path):
     print(f"Loading weights from: {weights_path}")
     model.load_state_dict(torch.load(weights_path, map_location='cpu'))
@@ -157,7 +160,7 @@ for epoch in range(num_epochs):
     # Save best model
     if val_acc > best_val_acc:
         best_val_acc = val_acc
-        torch.save(model.state_dict(), os.path.expanduser('~/Vision_Khana_Project/best_model_resnet.pth'))
+        torch.save(model.state_dict(), os.path.join(root_dir, 'step1_classification', 'best_model_resnet.pth'))
         print(f'  ✓ Saved best model with val_acc: {val_acc:.2f}%')
         sys.stdout.flush()
 

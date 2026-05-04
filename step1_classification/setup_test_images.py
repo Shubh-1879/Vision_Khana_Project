@@ -8,7 +8,8 @@ import os
 def setup_test_images():
     """Setup directory structure for test images"""
 
-    test_dir = os.path.expanduser('~/Vision_Khana_Project/test_images/')
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    test_dir = os.path.join(root_dir, 'step1_classification', 'test_images')
     os.makedirs(test_dir, exist_ok=True)
 
     print("TEST IMAGE SETUP")

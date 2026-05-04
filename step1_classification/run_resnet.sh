@@ -9,7 +9,7 @@
 #PBS -o training_output_resnet.log
 
 # Change to project directory
-cd $PBS_O_WORKDIR || cd ~/Vision_Khana_Project || exit 1
+cd $PBS_O_WORKDIR/step1_classification || cd ~/Vision_Khana_Project/step1_classification || exit 1
 
 # Load necessary modules
 module load compiler/anaconda3

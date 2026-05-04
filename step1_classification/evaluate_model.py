@@ -103,7 +103,8 @@ def main():
     print("="*50)
 
     # Load class names from dataset
-    data_path = os.path.expanduser('~/Vision_Khana_Project/dataset/khana/')
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    data_path = os.path.join(root_dir, 'dataset', 'khana')
     if os.path.exists(data_path):
         dataset = ImageFolder(root=data_path, transform=None, loader=safe_pil_loader)
         class_names = dataset.classes
@@ -113,7 +114,7 @@ def main():
         class_names = [f"class_{i}" for i in range(80)]
 
     # Load best model
-    model_path = os.path.expanduser('~/Vision_Khana_Project/best_model_resnet.pth')
+    model_path = os.path.join(root_dir, 'step1_classification', 'best_model_resnet.pth')
     model = load_model(model_path, len(class_names))
 
     if model is None:
@@ -124,7 +125,7 @@ def main():
     # For now, create a placeholder - user needs to provide actual test images
     test_image_paths = [
         # Add paths to your 20-30 test images here
-        # Example: "~/Vision_Khana_Project/test_images/image1.jpg"
+        # Example: "<repo_root>/step1_classification/test_images/image1.jpg"
     ]
 
     if not test_image_paths:
@@ -134,8 +135,8 @@ def main():
         print("Please add paths to your 20-30 test images in the test_image_paths list")
         print("Example:")
         print('test_image_paths = [')
-        print('    "~/Vision_Khana_Project/test_images/aloo_gobi_001.jpg",')
-        print('    "~/Vision_Khana_Project/test_images/chana_masala_002.jpg",')
+        print(f'    "{os.path.join(root_dir, "step1_classification", "test_images", "aloo_gobi_001.jpg")}",')
+        print(f'    "{os.path.join(root_dir, "step1_classification", "test_images", "chana_masala_002.jpg")}",')
         print('    # ... add more test images')
         print(']')
         print("\nOnce test images are ready, run this script again.")
@@ -147,7 +148,7 @@ def main():
 
     # Save results
     import json
-    results_file = os.path.expanduser('~/Vision_Khana_Project/evaluation_results.json')
+    results_file = os.path.join(root_dir, 'step1_classification', 'evaluation_results.json')
     with open(results_file, 'w') as f:
         json.dump(results, f, indent=2)
 

@@ -14,8 +14,9 @@ def setup_object_detection_model(num_classes=81):  # 80 food classes + backgroun
     """
     Setup Faster R-CNN model for object detection
     """
-    # Load pretrained model
-    model = fasterrcnn_resnet50_fpn(pretrained=True)
+    # Load pretrained model weights
+    weights = torchvision.models.detection.FasterRCNN_ResNet50_FPN_Weights.COCO_V1
+    model = fasterrcnn_resnet50_fpn(weights=weights)
 
     # Replace the classifier with a new one for our number of classes
     in_features = model.roi_heads.box_predictor.cls_score.in_features
@@ -27,7 +28,8 @@ def create_thali_dataset_structure():
     """
     Create directory structure for thali object detection dataset
     """
-    base_dir = os.path.expanduser('~/Vision_Khana_Project/thali_detection/')
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    base_dir = os.path.join(root_dir, 'step2_object_detection', 'thali_detection')
 
     dirs_to_create = [
         'images/train',
@@ -93,7 +95,7 @@ def create_thali_dataset_structure():
     """
 
     readme_path = os.path.join(base_dir, 'README.md')
-    with open(readme_path, 'w') as f:
+    with open(readme_path, 'w', encoding='utf-8') as f:
         f.write(readme_content)
 
     print(f"✓ Created README: {readme_path}")
@@ -101,6 +103,8 @@ def create_thali_dataset_structure():
 def main():
     print("Setting up Object Detection for Step 2...")
     print("="*50)
+
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
     # Create dataset structure
     create_thali_dataset_structure()
@@ -111,7 +115,7 @@ def main():
     print("✓ Model architecture ready")
 
     # Save model template
-    model_path = os.path.expanduser('~/Vision_Khana_Project/thali_detection/models/faster_rcnn_template.pth')
+    model_path = os.path.join(root_dir, 'step2_object_detection', 'thali_detection', 'models', 'faster_rcnn_template.pth')
     torch.save(model.state_dict(), model_path)
     print(f"✓ Model template saved: {model_path}")
 
@@ -119,10 +123,10 @@ def main():
     print("OBJECT DETECTION SETUP COMPLETE")
     print("="*60)
     print("Next steps:")
-    print("1. Add clean thali images to thali_detection/images/")
+    print("1. Add clean thali images to step2_object_detection/thali_detection/images/")
     print("2. Create COCO-format annotations for bounding boxes")
-    print("3. Run train_object_detection.py when data is ready")
-    print("\nSee thali_detection/README.md for detailed instructions")
+    print("3. Run step2_object_detection/train_object_detection.py when data is ready")
+    print("\nSee step2_object_detection/thali_detection/README.md for detailed instructions")
 
 if __name__ == "__main__":
     main()
