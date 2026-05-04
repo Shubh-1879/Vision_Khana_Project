@@ -17,21 +17,15 @@ def get_project_status():
             "step1_classification": {
                 "name": "Image Classification (80 classes)",
                 "target_accuracy": ">91% validation accuracy",
-                "status": "IN_PROGRESS",
+                "status": "COMPLETED",
                 "models": {
-                    "custom_cnn": {
-                        "script": "khana_classification.py",
-                        "job_script": "run.sh",
-                        "logs": ["training_output.log", "training_error.log"],
-                        "model_file": "best_model.pth",
-                        "status": "RUNNING_ON_HPC"
-                    },
                     "resnet50_finetune": {
                         "script": "khana_classification_resnet.py",
                         "job_script": "run_resnet.sh",
                         "logs": ["training_output_resnet.log", "training_error_resnet.log"],
                         "model_file": "best_model_resnet.pth",
-                        "status": "RUNNING_ON_HPC"
+                        "status": "SUCCESS",
+                        "validation_accuracy": 91.15
                     }
                 },
                 "dataset": {

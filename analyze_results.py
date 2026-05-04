@@ -14,10 +14,10 @@ from datetime import datetime
 from evaluate_model import evaluate_on_test_images
 
 def load_best_models():
-    """Load the best trained models"""
+    """Load the best trained ResNet50 model"""
     models = {}
 
-    # Try to load ResNet50 model first (preferred)
+    # Load ResNet50 model
     resnet_path = os.path.expanduser('~/Vision_Khana_Project/best_model_resnet.pth')
     if os.path.exists(resnet_path):
         print("Loading ResNet50 model...")
@@ -38,53 +38,6 @@ def load_best_models():
         print("✓ ResNet50 model loaded")
     else:
         print("✗ ResNet50 model not found")
-
-    # Try to load custom CNN model
-    custom_path = os.path.expanduser('~/Vision_Khana_Project/best_model.pth')
-    if os.path.exists(custom_path):
-        print("Loading Custom CNN model...")
-        # Recreate SimpleKhanaCNN architecture and load state_dict
-        class SimpleKhanaCNN(torch.nn.Module):
-            def __init__(self, num_classes):
-                super().__init__()
-                self.features = torch.nn.Sequential(
-                    torch.nn.Conv2d(3, 32, kernel_size=3, padding=1),
-                    torch.nn.ReLU(inplace=True),
-                    torch.nn.BatchNorm2d(32),
-                    torch.nn.MaxPool2d(kernel_size=2),
-                    torch.nn.Conv2d(32, 64, kernel_size=3, padding=1),
-                    torch.nn.ReLU(inplace=True),
-                    torch.nn.BatchNorm2d(64),
-                    torch.nn.MaxPool2d(kernel_size=2),
-                    torch.nn.Conv2d(64, 128, kernel_size=3, padding=1),
-                    torch.nn.ReLU(inplace=True),
-                    torch.nn.BatchNorm2d(128),
-                    torch.nn.MaxPool2d(kernel_size=2),
-                    torch.nn.Dropout2d(0.2),
-                )
-                self.pool = torch.nn.AdaptiveAvgPool2d((1, 1))
-                self.classifier = torch.nn.Sequential(
-                    torch.nn.Flatten(),
-                    torch.nn.Linear(128, 512),
-                    torch.nn.ReLU(inplace=True),
-                    torch.nn.Dropout(0.5),
-                    torch.nn.Linear(512, num_classes)
-                )
-
-            def forward(self, x):
-                x = self.features(x)
-                x = self.pool(x)
-                x = self.classifier(x)
-                return x
-
-        model = SimpleKhanaCNN(80)
-        # Load saved weights
-        state_dict = torch.load(custom_path, map_location='cpu')
-        model.load_state_dict(state_dict)
-        models['custom_cnn'] = model
-        print("✓ Custom CNN model loaded")
-    else:
-        print("✗ Custom CNN model not found")
 
     return models
 
@@ -108,21 +61,6 @@ def analyze_training_logs():
                     }
                     break
 
-    # Check Custom CNN logs
-    custom_log = os.path.expanduser('~/Vision_Khana_Project/training_output.log')
-    if os.path.exists(custom_log):
-        with open(custom_log, 'r') as f:
-            content = f.read()
-            lines = content.split('\n')
-            for line in reversed(lines):
-                if 'Final Validation Accuracy:' in line:
-                    acc = float(line.split(':')[1].strip().split('%')[0])
-                    results['custom_cnn'] = {
-                        'final_val_acc': acc,
-                        'status': 'SUCCESS' if acc > 91 else 'BELOW_BASELINE'
-                    }
-                    break
-
     return results
 
 def prepare_leaderboard_submission(model_results, test_results):
@@ -130,17 +68,14 @@ def prepare_leaderboard_submission(model_results, test_results):
     submission = {
         "team_name": "Vision_Khana_Project",
         "submission_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "model_used": "ResNet50_FineTuned",  # or "Custom_CNN"
+        "model_used": "ResNet50_FineTuned",
         "validation_accuracy": 0.0,
         "test_predictions": []
     }
 
-    # Use the best performing model
-    best_model = max(model_results.keys(),
-                    key=lambda x: model_results[x]['final_val_acc'])
-
-    submission["model_used"] = best_model.replace('_', '_').title()
-    submission["validation_accuracy"] = model_results[best_model]['final_val_acc']
+    # Use ResNet50 results
+    if 'resnet50' in model_results:
+        submission["validation_accuracy"] = model_results['resnet50']['final_val_acc']
 
     # Add test predictions
     for result in test_results:
@@ -197,10 +132,8 @@ def generate_report():
         else:
             class_names = [f"class_{i}" for i in range(80)]
 
-        # Evaluate best model
-        best_model_name = max(training_results.keys(),
-                            key=lambda x: training_results[x]['final_val_acc'])
-        best_model = models[best_model_name]
+        # Evaluate ResNet50 model
+        best_model = models['resnet50']
 
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         test_results = evaluate_on_test_images(best_model, test_images[:30], class_names, device)
