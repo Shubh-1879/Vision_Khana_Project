@@ -3,6 +3,9 @@ Khana Dataset Classification - Training Script
 Trains a CNN to classify 80 Indian food classes with target accuracy >91%
 """
 
+import sys
+sys.stdout.flush()
+
 import torch
 import torchvision
 import torchvision.transforms as transforms
@@ -15,6 +18,7 @@ from tqdm import tqdm
 import os
 from PIL import Image, ImageFile
 import warnings
+from datetime import datetime
 
 # Handle corrupted images
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -145,32 +149,40 @@ def validate_epoch(model, loader, criterion, device):
 print("\n" + "="*60)
 print("Starting Training...")
 print("="*60 + "\n")
+sys.stdout.flush()
 
 num_epochs = 20
 best_val_acc = 0.0
 
 for epoch in range(num_epochs):
+    start_time = datetime.now()
     train_loss, train_acc = train_epoch(model, train_loader, criterion, optimizer, device)
     val_loss, val_acc = validate_epoch(model, val_loader, criterion, device)
     scheduler.step()
     
-    print(f'Epoch {epoch+1}/{num_epochs}: Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%, Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%')
+    elapsed = (datetime.now() - start_time).total_seconds() / 60  # minutes
+    print(f'[{datetime.now().strftime("%H:%M:%S")}] Epoch {epoch+1}/{num_epochs}: Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%, Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}% ({elapsed:.1f} min)')
+    sys.stdout.flush()
     
     # Save best model
     if val_acc > best_val_acc:
         best_val_acc = val_acc
         torch.save(model.state_dict(), os.path.expanduser('~/Vision_Khana_Project/best_model.pth'))
-        print(f'  → Saved best model with val_acc: {val_acc:.2f}%')
+        print(f'  ✓ Saved best model with val_acc: {val_acc:.2f}%')
+        sys.stdout.flush()
 
 # Final validation accuracy
 print("\n" + "="*60)
 print("Training Complete!")
 print("="*60 + "\n")
+sys.stdout.flush()
 _, final_val_acc = validate_epoch(model, val_loader, criterion, device)
 print(f'Final Validation Accuracy: {final_val_acc:.2f}%')
 print(f'Best Validation Accuracy: {best_val_acc:.2f}%')
+sys.stdout.flush()
 
 if final_val_acc > 91:
     print('✓ Success: Above baseline (>91%)!')
 else:
     print(f'✗ Below baseline (>91%), current: {final_val_acc:.2f}%')
+sys.stdout.flush()
