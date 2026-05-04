@@ -151,7 +151,7 @@ print("Starting Training...")
 print("="*60 + "\n")
 sys.stdout.flush()
 
-num_epochs = 20
+num_epochs = 3
 best_val_acc = 0.0
 
 for epoch in range(num_epochs):
