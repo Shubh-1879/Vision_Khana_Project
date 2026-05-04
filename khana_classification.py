@@ -13,9 +13,26 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 import os
+from PIL import Image, ImageFile
+import warnings
+
+# Handle corrupted images
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+warnings.filterwarnings("ignore", message="Palette images with Transparency")
+
+def safe_pil_loader(path):
+    """Safely load PIL image, handling corrupted files"""
+    try:
+        with open(path, 'rb') as f:
+            img = Image.open(f)
+            return img.convert('RGB')
+    except (OSError, IOError) as e:
+        print(f"Warning: Could not load image {path}: {e}")
+        # Return a blank image as fallback
+        return Image.new('RGB', (224, 224), color=(128, 128, 128))
 
 # Set data path
-data_path = os.path.expanduser('~/Vision_Khana_Project/dataset/')
+data_path = os.path.expanduser('~/Vision_Khana_Project/dataset/khana/')
 
 # Define transforms
 transform = transforms.Compose([
@@ -26,7 +43,7 @@ transform = transforms.Compose([
 
 # Load dataset
 print("Loading dataset...")
-dataset = ImageFolder(root=data_path, transform=transform)
+dataset = ImageFolder(root=data_path, transform=transform, loader=safe_pil_loader)
 
 # Split into train and val (80-20)
 train_size = int(0.8 * len(dataset))
