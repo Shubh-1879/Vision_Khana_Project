@@ -61,42 +61,21 @@ val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
 print(f'Num classes: {len(dataset.classes)}')
 print(f'Train size: {len(train_dataset)}, Val size: {len(val_dataset)}')
 
-# Build a small CNN from scratch for an end-to-end pipeline
-class SimpleKhanaCNN(torch.nn.Module):
-    def __init__(self, num_classes):
-        super().__init__()
-        self.features = torch.nn.Sequential(
-            torch.nn.Conv2d(3, 32, kernel_size=3, padding=1),
-            torch.nn.ReLU(inplace=True),
-            torch.nn.BatchNorm2d(32),
-            torch.nn.MaxPool2d(kernel_size=2),
-            torch.nn.Conv2d(32, 64, kernel_size=3, padding=1),
-            torch.nn.ReLU(inplace=True),
-            torch.nn.BatchNorm2d(64),
-            torch.nn.MaxPool2d(kernel_size=2),
-            torch.nn.Conv2d(64, 128, kernel_size=3, padding=1),
-            torch.nn.ReLU(inplace=True),
-            torch.nn.BatchNorm2d(128),
-            torch.nn.MaxPool2d(kernel_size=2),
-            torch.nn.Dropout2d(0.2),
-        )
-        self.pool = torch.nn.AdaptiveAvgPool2d((1, 1))
-        self.classifier = torch.nn.Sequential(
-            torch.nn.Flatten(),
-            torch.nn.Linear(128, 512),
-            torch.nn.ReLU(inplace=True),
-            torch.nn.Dropout(0.5),
-            torch.nn.Linear(512, num_classes)
-        )
-
-    def forward(self, x):
-        x = self.features(x)
-        x = self.pool(x)
-        x = self.classifier(x)
-        return x
-
+# Load pretrained ResNet50 and fine-tune for 80 classes
+print("Loading pretrained ResNet50...")
 num_classes = len(dataset.classes)
-model = SimpleKhanaCNN(num_classes)
+model = torchvision.models.resnet50(pretrained=True)
+
+# Freeze early layers for fine-tuning (layers 1 and 2)
+print("Freezing early layers for fine-tuning...")
+for param in model.layer1.parameters():
+    param.requires_grad = False
+for param in model.layer2.parameters():
+    param.requires_grad = False
+
+# Replace final classification layer for 80 classes
+num_ftrs = model.fc.in_features
+model.fc = torch.nn.Linear(num_ftrs, num_classes)
 
 # Move to device
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -104,8 +83,10 @@ model = model.to(device)
 
 # Loss, optimizer, scheduler
 criterion = torch.nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.5)
+# Only optimize unfrozen parameters (layer3, layer4, and fc)
+params_to_optimize = [p for p in model.parameters() if p.requires_grad]
+optimizer = torch.optim.Adam(params_to_optimize, lr=0.0001)  # Lower LR for fine-tuning
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=2, gamma=0.5)
 
 print(f'Device: {device}')
 print(f'Trainable parameters: {sum(p.numel() for p in model.parameters() if p.requires_grad)}')
