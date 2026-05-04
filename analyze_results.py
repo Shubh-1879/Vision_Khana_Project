@@ -21,10 +21,8 @@ def load_best_models():
     resnet_path = os.path.expanduser('~/Vision_Khana_Project/best_model_resnet.pth')
     if os.path.exists(resnet_path):
         print("Loading ResNet50 model...")
-        model = torchvision.models.resnet50(pretrained=False)
-        num_ftrs = model.fc.in_features
-        model.fc = torch.nn.Linear(num_ftrs, 80)
-        model.load_state_dict(torch.load(resnet_path, map_location='cpu'))
+        # Load the entire model (architecture + weights) from saved file
+        model = torch.load(resnet_path, map_location='cpu')
         models['resnet50'] = model
         print("✓ ResNet50 model loaded")
     else:
@@ -34,10 +32,8 @@ def load_best_models():
     custom_path = os.path.expanduser('~/Vision_Khana_Project/best_model.pth')
     if os.path.exists(custom_path):
         print("Loading Custom CNN model...")
-        # Import the model architecture
-        from khana_classification import SimpleKhanaCNN
-        model = SimpleKhanaCNN(80)
-        model.load_state_dict(torch.load(custom_path, map_location='cpu'))
+        # Load the entire model (architecture + weights) from saved file
+        model = torch.load(custom_path, map_location='cpu')
         models['custom_cnn'] = model
         print("✓ Custom CNN model loaded")
     else:
