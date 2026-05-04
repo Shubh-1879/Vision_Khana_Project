@@ -21,8 +21,19 @@ def load_best_models():
     resnet_path = os.path.expanduser('~/Vision_Khana_Project/best_model_resnet.pth')
     if os.path.exists(resnet_path):
         print("Loading ResNet50 model...")
-        # Load the entire model (architecture + weights) from saved file
-        model = torch.load(resnet_path, map_location='cpu')
+        # Recreate ResNet50 architecture and load state_dict
+        model = torchvision.models.resnet50(pretrained=False)
+        # Freeze early layers (same as training)
+        for param in model.layer1.parameters():
+            param.requires_grad = False
+        for param in model.layer2.parameters():
+            param.requires_grad = False
+        # Replace classifier for 80 classes
+        num_ftrs = model.fc.in_features
+        model.fc = torch.nn.Linear(num_ftrs, 80)
+        # Load saved weights
+        state_dict = torch.load(resnet_path, map_location='cpu')
+        model.load_state_dict(state_dict)
         models['resnet50'] = model
         print("✓ ResNet50 model loaded")
     else:
@@ -32,8 +43,44 @@ def load_best_models():
     custom_path = os.path.expanduser('~/Vision_Khana_Project/best_model.pth')
     if os.path.exists(custom_path):
         print("Loading Custom CNN model...")
-        # Load the entire model (architecture + weights) from saved file
-        model = torch.load(custom_path, map_location='cpu')
+        # Recreate SimpleKhanaCNN architecture and load state_dict
+        class SimpleKhanaCNN(torch.nn.Module):
+            def __init__(self, num_classes):
+                super().__init__()
+                self.features = torch.nn.Sequential(
+                    torch.nn.Conv2d(3, 32, kernel_size=3, padding=1),
+                    torch.nn.ReLU(inplace=True),
+                    torch.nn.BatchNorm2d(32),
+                    torch.nn.MaxPool2d(kernel_size=2),
+                    torch.nn.Conv2d(32, 64, kernel_size=3, padding=1),
+                    torch.nn.ReLU(inplace=True),
+                    torch.nn.BatchNorm2d(64),
+                    torch.nn.MaxPool2d(kernel_size=2),
+                    torch.nn.Conv2d(64, 128, kernel_size=3, padding=1),
+                    torch.nn.ReLU(inplace=True),
+                    torch.nn.BatchNorm2d(128),
+                    torch.nn.MaxPool2d(kernel_size=2),
+                    torch.nn.Dropout2d(0.2),
+                )
+                self.pool = torch.nn.AdaptiveAvgPool2d((1, 1))
+                self.classifier = torch.nn.Sequential(
+                    torch.nn.Flatten(),
+                    torch.nn.Linear(128, 512),
+                    torch.nn.ReLU(inplace=True),
+                    torch.nn.Dropout(0.5),
+                    torch.nn.Linear(512, num_classes)
+                )
+
+            def forward(self, x):
+                x = self.features(x)
+                x = self.pool(x)
+                x = self.classifier(x)
+                return x
+
+        model = SimpleKhanaCNN(80)
+        # Load saved weights
+        state_dict = torch.load(custom_path, map_location='cpu')
+        model.load_state_dict(state_dict)
         models['custom_cnn'] = model
         print("✓ Custom CNN model loaded")
     else:
