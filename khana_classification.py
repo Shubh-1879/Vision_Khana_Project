@@ -15,7 +15,7 @@ from tqdm import tqdm
 import os
 
 # Set data path
-data_path = os.path.expanduser('~/master/Vision_Khana_Project/dataset/')
+data_path = os.path.expanduser('~/Vision_Khana_Project/dataset/')
 
 # Define transforms
 transform = transforms.Compose([
@@ -142,7 +142,7 @@ for epoch in range(num_epochs):
     # Save best model
     if val_acc > best_val_acc:
         best_val_acc = val_acc
-        torch.save(model.state_dict(), os.path.expanduser('~/master/Vision_Khana_Project/best_model.pth'))
+        torch.save(model.state_dict(), os.path.expanduser('~/Vision_Khana_Project/best_model.pth'))
         print(f'  → Saved best model with val_acc: {val_acc:.2f}%')
 
 # Final validation accuracy
