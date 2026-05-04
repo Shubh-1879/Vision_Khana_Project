@@ -64,7 +64,16 @@ print(f'Train size: {len(train_dataset)}, Val size: {len(val_dataset)}')
 # Load pretrained ResNet50 and fine-tune for 80 classes
 print("Loading pretrained ResNet50...")
 num_classes = len(dataset.classes)
-model = torchvision.models.resnet50(pretrained=True)
+model = torchvision.models.resnet50(pretrained=False)  # Load architecture only
+
+# Load pretrained weights from local file
+weights_path = os.path.expanduser('~/Vision_Khana_Project/pretrained_weights/resnet50-19c8e357.pth')
+if os.path.exists(weights_path):
+    print(f"Loading weights from: {weights_path}")
+    model.load_state_dict(torch.load(weights_path, map_location='cpu'))
+else:
+    print(f"WARNING: Pretrained weights not found at {weights_path}")
+    print("Please download weights using: python download_weights.py")
 
 # Freeze early layers for fine-tuning (layers 1 and 2)
 print("Freezing early layers for fine-tuning...")
