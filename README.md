@@ -32,22 +32,3 @@ Vision_Khana_Project/
     ├── run_detection_training.sh
     └── thali_detection/
 ```
-
-## Quick start
-
-### Step 1: classification
-
-```bash
-cd step1_classification
-python khana_classification_resnet.py
-python analyze_results.py
-```
-
-### Step 2: object detection
-
-```bash
-cd step2_object_detection
-python setup_object_detection.py
-python train_object_detection.py
-python test_object_detection.py
-```
