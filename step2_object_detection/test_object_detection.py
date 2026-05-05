@@ -36,11 +36,11 @@ def sanity_check_data_dirs():
     ]
     missing = [d for d in required_dirs if not os.path.isdir(d)]
     if missing:
-        print('⚠️ Missing required directories:')
+        print('[WARNING] Missing required directories:')
         for path in missing:
             print('  -', path)
         return False
-    print('✓ Object detection directories are present')
+    print('[OK] Object detection directories are present')
     return True
 
 
@@ -55,10 +55,10 @@ def sanity_check_model():
         output = model([dummy_image])
 
     if isinstance(output, list) and len(output) == 1:
-        print('✓ Model forward pass succeeded')
+        print('[OK] Model forward pass succeeded')
         print(f'  Output keys: {list(output[0].keys())}')
         return True
-    print('✗ Model forward pass failed')
+    print('[ERROR] Model forward pass failed')
     return False
 
 
@@ -69,9 +69,9 @@ def main():
     model_ok = sanity_check_model()
 
     if data_ok and model_ok:
-        print('\n✅ Step 2 object detection framework is ready')
+        print('\n[OK] Step 2 object detection framework is ready')
     else:
-        print('\n⚠️ Fix the issues above before training')
+        print('\n[WARNING] Fix the issues above before training')
 
 
 if __name__ == '__main__':

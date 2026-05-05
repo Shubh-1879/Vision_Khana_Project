@@ -1,0 +1,806 @@
+{
+  "images": [
+    {
+      "id": 1,
+      "file_name": "Plate 121.jpg",
+      "width": 916,
+      "height": 720
+    },
+    {
+      "id": 2,
+      "file_name": "Plate 125.jpg",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": 3,
+      "file_name": "Plate 146.jpg",
+      "width": 2296,
+      "height": 2514
+    },
+    {
+      "id": 4,
+      "file_name": "Plate 177.jpg",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": 5,
+      "file_name": "Plate 178.jpg",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": 6,
+      "file_name": "Plate 221.jpg",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": 7,
+      "file_name": "Plate 258.jpg",
+      "width": 1280,
+      "height": 960
+    },
+    {
+      "id": 8,
+      "file_name": "Plate 291.jpg",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": 9,
+      "file_name": "Plate 315.jpg",
+      "width": 1280,
+      "height": 960
+    },
+    {
+      "id": 10,
+      "file_name": "plate 251 .jpg",
+      "width": 1280,
+      "height": 720
+    }
+  ],
+  "annotations": [
+    {
+      "id": 1,
+      "image_id": 1,
+      "category_id": 20,
+      "bbox": [
+        301.0,
+        141.0,
+        249.0,
+        373.0
+      ],
+      "area": 92877.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 2,
+      "image_id": 1,
+      "category_id": 64,
+      "bbox": [
+        143.0,
+        137.0,
+        173.0,
+        142.0
+      ],
+      "area": 24566.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 3,
+      "image_id": 1,
+      "category_id": 62,
+      "bbox": [
+        522.0,
+        147.0,
+        213.0,
+        125.0
+      ],
+      "area": 26625.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 4,
+      "image_id": 2,
+      "category_id": 66,
+      "bbox": [
+        492.0,
+        138.0,
+        287.0,
+        412.0
+      ],
+      "area": 118244.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 5,
+      "image_id": 2,
+      "category_id": 32,
+      "bbox": [
+        870.0,
+        293.0,
+        142.0,
+        275.0
+      ],
+      "area": 39050.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 6,
+      "image_id": 2,
+      "category_id": 15,
+      "bbox": [
+        257.0,
+        65.0,
+        244.0,
+        226.0
+      ],
+      "area": 55144.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 7,
+      "image_id": 2,
+      "category_id": 13,
+      "bbox": [
+        769.0,
+        134.0,
+        232.0,
+        157.0
+      ],
+      "area": 36424.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 8,
+      "image_id": 2,
+      "category_id": 58,
+      "bbox": [
+        251.0,
+        280.0,
+        165.0,
+        267.0
+      ],
+      "area": 44055.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 9,
+      "image_id": 3,
+      "category_id": 35,
+      "bbox": [
+        224.0,
+        373.0,
+        603.0,
+        521.0
+      ],
+      "area": 314163.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 10,
+      "image_id": 3,
+      "category_id": 62,
+      "bbox": [
+        1430.0,
+        481.0,
+        640.0,
+        408.0
+      ],
+      "area": 261120.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 11,
+      "image_id": 4,
+      "category_id": 60,
+      "bbox": [
+        510.0,
+        138.0,
+        294.0,
+        388.0
+      ],
+      "area": 114072.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 12,
+      "image_id": 4,
+      "category_id": 62,
+      "bbox": [
+        760.0,
+        145.0,
+        244.0,
+        135.0
+      ],
+      "area": 32940.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 13,
+      "image_id": 4,
+      "category_id": 39,
+      "bbox": [
+        350.0,
+        139.0,
+        161.0,
+        152.0
+      ],
+      "area": 24472.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 14,
+      "image_id": 5,
+      "category_id": 44,
+      "bbox": [
+        461.0,
+        114.0,
+        374.0,
+        164.0
+      ],
+      "area": 61336.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 15,
+      "image_id": 6,
+      "category_id": 36,
+      "bbox": [
+        126.0,
+        297.0,
+        184.0,
+        180.0
+      ],
+      "area": 33120.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 16,
+      "image_id": 6,
+      "category_id": 39,
+      "bbox": [
+        259.0,
+        128.0,
+        176.0,
+        141.0
+      ],
+      "area": 24816.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 17,
+      "image_id": 6,
+      "category_id": 54,
+      "bbox": [
+        453.0,
+        124.0,
+        229.0,
+        175.0
+      ],
+      "area": 40075.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 18,
+      "image_id": 7,
+      "category_id": 44,
+      "bbox": [
+        186.0,
+        299.0,
+        154.0,
+        274.0
+      ],
+      "area": 42196.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 19,
+      "image_id": 7,
+      "category_id": 39,
+      "bbox": [
+        739.0,
+        132.0,
+        256.0,
+        153.0
+      ],
+      "area": 39168.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 20,
+      "image_id": 8,
+      "category_id": 20,
+      "bbox": [
+        486.0,
+        85.0,
+        273.0,
+        428.0
+      ],
+      "area": 116844.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 21,
+      "image_id": 8,
+      "category_id": 39,
+      "bbox": [
+        839.0,
+        242.0,
+        167.0,
+        248.0
+      ],
+      "area": 41416.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 22,
+      "image_id": 9,
+      "category_id": 79,
+      "bbox": [
+        439.0,
+        98.0,
+        421.0,
+        192.0
+      ],
+      "area": 80832.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 23,
+      "image_id": 9,
+      "category_id": 39,
+      "bbox": [
+        205.0,
+        321.0,
+        269.0,
+        227.0
+      ],
+      "area": 61063.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 24,
+      "image_id": 9,
+      "category_id": 59,
+      "bbox": [
+        862.0,
+        96.0,
+        192.0,
+        208.0
+      ],
+      "area": 39936.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 25,
+      "image_id": 10,
+      "category_id": 63,
+      "bbox": [
+        324.0,
+        185.0,
+        169.0,
+        120.0
+      ],
+      "area": 20280.0,
+      "iscrowd": 0
+    },
+    {
+      "id": 26,
+      "image_id": 10,
+      "category_id": 62,
+      "bbox": [
+        271.0,
+        313.0,
+        139.0,
+        214.0
+      ],
+      "area": 29746.0,
+      "iscrowd": 0
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "aloo_gobi",
+      "supercategory": "food"
+    },
+    {
+      "id": 2,
+      "name": "aloo_methi",
+      "supercategory": "food"
+    },
+    {
+      "id": 3,
+      "name": "aloo_mutter",
+      "supercategory": "food"
+    },
+    {
+      "id": 4,
+      "name": "aloo_paratha",
+      "supercategory": "food"
+    },
+    {
+      "id": 5,
+      "name": "amritsari_kulcha",
+      "supercategory": "food"
+    },
+    {
+      "id": 6,
+      "name": "anda_curry",
+      "supercategory": "food"
+    },
+    {
+      "id": 7,
+      "name": "balushahi",
+      "supercategory": "food"
+    },
+    {
+      "id": 8,
+      "name": "banana_chips",
+      "supercategory": "food"
+    },
+    {
+      "id": 9,
+      "name": "besan_laddu",
+      "supercategory": "food"
+    },
+    {
+      "id": 10,
+      "name": "bhindi_masala",
+      "supercategory": "food"
+    },
+    {
+      "id": 11,
+      "name": "biryani",
+      "supercategory": "food"
+    },
+    {
+      "id": 12,
+      "name": "boondi_laddu",
+      "supercategory": "food"
+    },
+    {
+      "id": 13,
+      "name": "chaas",
+      "supercategory": "food"
+    },
+    {
+      "id": 14,
+      "name": "chana_masala",
+      "supercategory": "food"
+    },
+    {
+      "id": 15,
+      "name": "chapati",
+      "supercategory": "food"
+    },
+    {
+      "id": 16,
+      "name": "chicken_pizza",
+      "supercategory": "food"
+    },
+    {
+      "id": 17,
+      "name": "chicken_wings",
+      "supercategory": "food"
+    },
+    {
+      "id": 18,
+      "name": "chikki",
+      "supercategory": "food"
+    },
+    {
+      "id": 19,
+      "name": "chivda",
+      "supercategory": "food"
+    },
+    {
+      "id": 20,
+      "name": "chole_bhature",
+      "supercategory": "food"
+    },
+    {
+      "id": 21,
+      "name": "dabeli",
+      "supercategory": "food"
+    },
+    {
+      "id": 22,
+      "name": "dal_khichdi",
+      "supercategory": "food"
+    },
+    {
+      "id": 23,
+      "name": "dhokla",
+      "supercategory": "food"
+    },
+    {
+      "id": 24,
+      "name": "falooda",
+      "supercategory": "food"
+    },
+    {
+      "id": 25,
+      "name": "fish_curry",
+      "supercategory": "food"
+    },
+    {
+      "id": 26,
+      "name": "gajar_ka_halwa",
+      "supercategory": "food"
+    },
+    {
+      "id": 27,
+      "name": "garlic_bread",
+      "supercategory": "food"
+    },
+    {
+      "id": 28,
+      "name": "garlic_naan",
+      "supercategory": "food"
+    },
+    {
+      "id": 29,
+      "name": "ghevar",
+      "supercategory": "food"
+    },
+    {
+      "id": 30,
+      "name": "grilled_sandwich",
+      "supercategory": "food"
+    },
+    {
+      "id": 31,
+      "name": "gujhia",
+      "supercategory": "food"
+    },
+    {
+      "id": 32,
+      "name": "gulab_jamun",
+      "supercategory": "food"
+    },
+    {
+      "id": 33,
+      "name": "hara_bhara_kabab",
+      "supercategory": "food"
+    },
+    {
+      "id": 34,
+      "name": "idiyappam",
+      "supercategory": "food"
+    },
+    {
+      "id": 35,
+      "name": "idli",
+      "supercategory": "food"
+    },
+    {
+      "id": 36,
+      "name": "jalebi",
+      "supercategory": "food"
+    },
+    {
+      "id": 37,
+      "name": "kaju_katli",
+      "supercategory": "food"
+    },
+    {
+      "id": 38,
+      "name": "khakhra",
+      "supercategory": "food"
+    },
+    {
+      "id": 39,
+      "name": "kheer",
+      "supercategory": "food"
+    },
+    {
+      "id": 40,
+      "name": "kulfi",
+      "supercategory": "food"
+    },
+    {
+      "id": 41,
+      "name": "margherita_pizza",
+      "supercategory": "food"
+    },
+    {
+      "id": 42,
+      "name": "masala_dosa",
+      "supercategory": "food"
+    },
+    {
+      "id": 43,
+      "name": "masala_papad",
+      "supercategory": "food"
+    },
+    {
+      "id": 44,
+      "name": "medu_vada",
+      "supercategory": "food"
+    },
+    {
+      "id": 45,
+      "name": "misal_pav",
+      "supercategory": "food"
+    },
+    {
+      "id": 46,
+      "name": "modak",
+      "supercategory": "food"
+    },
+    {
+      "id": 47,
+      "name": "moong_dal_halwa",
+      "supercategory": "food"
+    },
+    {
+      "id": 48,
+      "name": "murukku",
+      "supercategory": "food"
+    },
+    {
+      "id": 49,
+      "name": "mysore_pak",
+      "supercategory": "food"
+    },
+    {
+      "id": 50,
+      "name": "navratan_korma",
+      "supercategory": "food"
+    },
+    {
+      "id": 51,
+      "name": "neer_dosa",
+      "supercategory": "food"
+    },
+    {
+      "id": 52,
+      "name": "onion_pakoda",
+      "supercategory": "food"
+    },
+    {
+      "id": 53,
+      "name": "palak_paneer",
+      "supercategory": "food"
+    },
+    {
+      "id": 54,
+      "name": "paneer_masala",
+      "supercategory": "food"
+    },
+    {
+      "id": 55,
+      "name": "paneer_pizza",
+      "supercategory": "food"
+    },
+    {
+      "id": 56,
+      "name": "pani_puri",
+      "supercategory": "food"
+    },
+    {
+      "id": 57,
+      "name": "paniyaram",
+      "supercategory": "food"
+    },
+    {
+      "id": 58,
+      "name": "papdi_chaat",
+      "supercategory": "food"
+    },
+    {
+      "id": 59,
+      "name": "patrode",
+      "supercategory": "food"
+    },
+    {
+      "id": 60,
+      "name": "pav_bhaji",
+      "supercategory": "food"
+    },
+    {
+      "id": 61,
+      "name": "pepperoni_pizza",
+      "supercategory": "food"
+    },
+    {
+      "id": 62,
+      "name": "phirni",
+      "supercategory": "food"
+    },
+    {
+      "id": 63,
+      "name": "poha",
+      "supercategory": "food"
+    },
+    {
+      "id": 64,
+      "name": "pongal",
+      "supercategory": "food"
+    },
+    {
+      "id": 65,
+      "name": "puri_bhaji",
+      "supercategory": "food"
+    },
+    {
+      "id": 66,
+      "name": "rajma_chawal",
+      "supercategory": "food"
+    },
+    {
+      "id": 67,
+      "name": "rasgulla",
+      "supercategory": "food"
+    },
+    {
+      "id": 68,
+      "name": "rava_dosa",
+      "supercategory": "food"
+    },
+    {
+      "id": 69,
+      "name": "sabudana_khichdi",
+      "supercategory": "food"
+    },
+    {
+      "id": 70,
+      "name": "sabudana_vada",
+      "supercategory": "food"
+    },
+    {
+      "id": 71,
+      "name": "samosa",
+      "supercategory": "food"
+    },
+    {
+      "id": 72,
+      "name": "seekh_kebab",
+      "supercategory": "food"
+    },
+    {
+      "id": 73,
+      "name": "set_dosa",
+      "supercategory": "food"
+    },
+    {
+      "id": 74,
+      "name": "sev_puri",
+      "supercategory": "food"
+    },
+    {
+      "id": 75,
+      "name": "solkadhi",
+      "supercategory": "food"
+    },
+    {
+      "id": 76,
+      "name": "steamed_momo",
+      "supercategory": "food"
+    },
+    {
+      "id": 77,
+      "name": "thali",
+      "supercategory": "food"
+    },
+    {
+      "id": 78,
+      "name": "thukpa",
+      "supercategory": "food"
+    },
+    {
+      "id": 79,
+      "name": "uttapam",
+      "supercategory": "food"
+    },
+    {
+      "id": 80,
+      "name": "vada_pav",
+      "supercategory": "food"
+    }
+  ]
+}
