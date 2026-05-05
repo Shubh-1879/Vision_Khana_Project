@@ -157,8 +157,99 @@ class BEVTransformer:
             })
         
         return detections
-    
-    
+
+    def _load_annotation(self, annotation_json):
+        annotation_json = os.path.expanduser(annotation_json)
+        if not os.path.exists(annotation_json):
+            raise FileNotFoundError(f"Annotation file not found: {annotation_json}")
+
+        with open(annotation_json, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        ref_points = data.get('reference_points')
+        if not isinstance(ref_points, list) or len(ref_points) != 4:
+            raise ValueError(f"Annotation JSON must contain 4 reference_points, got {ref_points}")
+
+        image_path = data.get('image_path') or data.get('image') or data.get('file_name')
+        if image_path is None:
+            base_path = os.path.splitext(annotation_json)[0]
+            for ext in ['.jpg', '.jpeg', '.png']:
+                candidate = base_path + ext
+                if os.path.exists(candidate):
+                    image_path = candidate
+                    break
+
+        if image_path is None:
+            raise ValueError(
+                'Annotation JSON must include image_path or be named as <image_name>.json next to the image file'
+            )
+
+        if not os.path.isabs(image_path):
+            image_path = os.path.join(os.path.dirname(annotation_json), image_path)
+
+        return annotation_json, image_path, ref_points, data
+
+    def transform(self, annotation_json, output_path=None, save_homography=False, homography_output_path=None):
+        annotation_json, image_path, ref_points, _ = self._load_annotation(annotation_json)
+
+        image = cv2.imread(image_path)
+        if image is None:
+            raise ValueError(f"Could not read image: {image_path}")
+
+        H = self.estimate_homography(ref_points)
+        bev_image = self.transform_image(image, H)
+
+        if output_path:
+            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+            cv2.imwrite(output_path, bev_image)
+
+        if save_homography and homography_output_path:
+            os.makedirs(os.path.dirname(homography_output_path), exist_ok=True)
+            with open(homography_output_path, 'w', encoding='utf-8') as f:
+                json.dump({
+                    'image_path': image_path,
+                    'reference_points': ref_points,
+                    'homography': H.tolist()
+                }, f, indent=2)
+
+        return bev_image, H
+
+    def transform_batch(self, annotation_dir, output_dir=None, save_homography=False):
+        annotation_dir = os.path.expanduser(annotation_dir)
+        if not os.path.isdir(annotation_dir):
+            raise FileNotFoundError(f"Annotation directory not found: {annotation_dir}")
+
+        if output_dir is None:
+            output_dir = os.path.abspath(os.path.join(annotation_dir, '..', '..', 'bev_transformed', 'images'))
+
+        os.makedirs(output_dir, exist_ok=True)
+        results = []
+
+        for file_name in sorted(os.listdir(annotation_dir)):
+            if not file_name.lower().endswith('.json'):
+                continue
+
+            annotation_path = os.path.join(annotation_dir, file_name)
+            output_image_path = os.path.join(output_dir, os.path.splitext(file_name)[0] + '.jpg')
+            homography_path = None
+            if save_homography:
+                homography_path = os.path.join(output_dir, os.path.splitext(file_name)[0] + '_homography.json')
+
+            bev_image, H = self.transform(
+                annotation_path,
+                output_path=output_image_path,
+                save_homography=save_homography,
+                homography_output_path=homography_path
+            )
+
+            results.append({
+                'annotation': annotation_path,
+                'output_image': output_image_path,
+                'homography': H.tolist()
+            })
+
+        return results
+
     def compute_food_area(self, bbox, pixel_to_cm_ratio=1.0):
         """
         Compute food item area from bounding box

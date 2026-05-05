@@ -37,6 +37,15 @@ Use annotation tool to mark 4 corners of the thali plate:
 - Bottom-left
 - Bottom-right
 
+### Annotation JSON Format
+The annotation JSON should include the image file and four points:
+```json
+{
+  "image_path": "IMG_20260422_132404.jpg",
+  "reference_points": [[x1, y1], [x2, y2], [x3, y3], [x4, y4]]
+}
+```
+
 ### Step 3: Compute Homography Matrix
 The script will:
 1. Read reference points from annotations

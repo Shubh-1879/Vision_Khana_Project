@@ -4,7 +4,12 @@ __pycache__/
 *.pyd
 .ipynb_checkpoints/
 .vscode/
-dataset/
-dataset/khana/
 *.log
-pretrained_weights/step2_object_detection/thali_detection/models/*.pth
+step2_object_detection/thali_detection/models/*.pth
+# Keep dataset metadata but ignore raw image folders and temporary files
+dataset/khana/
+!dataset/labels.txt
+!dataset/taxonomy.csv
+step3_bev_transformation/data/natural_scenes/raw/
+*.DS_Store
+tmp_*.py

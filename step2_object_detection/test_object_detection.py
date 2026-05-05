@@ -16,7 +16,18 @@ def get_project_root():
     return os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 
-def get_detection_model(num_classes=81):
+def load_class_names():
+    labels_path = os.path.join(get_project_root(), 'dataset', 'labels.txt')
+    if not os.path.exists(labels_path):
+        raise FileNotFoundError(f'labels.txt not found at {labels_path}')
+    with open(labels_path, 'r', encoding='utf-8') as f:
+        return [line.strip() for line in f if line.strip()]
+
+
+def get_detection_model(num_classes=None):
+    if num_classes is None:
+        num_classes = len(load_class_names()) + 1
+
     model = fasterrcnn_resnet50_fpn(weights=torchvision.models.detection.FasterRCNN_ResNet50_FPN_Weights.COCO_V1)
     in_features = model.roi_heads.box_predictor.cls_score.in_features
     model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
@@ -46,7 +57,7 @@ def sanity_check_data_dirs():
 
 def sanity_check_model():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = get_detection_model(num_classes=81)
+    model = get_detection_model()
     model = model.to(device)
     model.eval()
 

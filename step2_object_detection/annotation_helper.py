@@ -13,9 +13,9 @@ def get_project_root():
 
 
 def load_class_names():
-    """Load the 80 food class names from labels.txt"""
+    """Load all food class names from dataset/labels.txt"""
     root = get_project_root()
-    labels_path = os.path.join(root, 'Khana Dataset', 'labels.txt')
+    labels_path = os.path.join(root, 'dataset', 'labels.txt')
     if not os.path.exists(labels_path):
         raise FileNotFoundError(f'labels.txt not found at {labels_path}')
     with open(labels_path, 'r', encoding='utf-8') as f:

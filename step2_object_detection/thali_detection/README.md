@@ -43,4 +43,9 @@
        - VGG Image Annotator (VIA)
        - CVAT (https://cvat.org/)
     3. Run train_object_detection.py to train the model
+
+    ## Notes
+    - The model now loads the class count from `dataset/labels.txt`, so new classes are supported automatically.
+    - For HPC training, use the provided `run_detection_training.sh` PBS script from `step2_object_detection/`.
+    - Keep only `dataset/labels.txt` and `dataset/taxonomy.csv` in GitHub; the raw `dataset/khana/` image folders should remain on external storage or HPC due to size.
     

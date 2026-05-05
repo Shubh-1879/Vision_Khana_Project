@@ -16,6 +16,17 @@ from tqdm import tqdm
 from datetime import datetime
 import matplotlib.pyplot as plt
 
+
+def load_class_names():
+    """Load all food class names from dataset/labels.txt"""
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    labels_path = os.path.join(root_dir, 'dataset', 'labels.txt')
+    if not os.path.exists(labels_path):
+        raise FileNotFoundError(f'labels.txt not found at {labels_path}')
+    with open(labels_path, 'r', encoding='utf-8') as f:
+        labels = [line.strip() for line in f if line.strip()]
+    return labels
+
 class CocoDataset(Dataset):
     """COCO format dataset for object detection"""
     
@@ -79,8 +90,12 @@ class CocoDataset(Dataset):
         return image, target
 
 
-def get_detection_model(num_classes=81):
+def get_detection_model(num_classes=None):
     """Create Faster R-CNN model for detection"""
+    if num_classes is None:
+        class_names = load_class_names()
+        num_classes = len(class_names) + 1
+
     model = fasterrcnn_resnet50_fpn(weights=torchvision.models.detection.FasterRCNN_ResNet50_FPN_Weights.COCO_V1)
     
     # Replace classifier
@@ -191,8 +206,10 @@ def train_detection_model(data_dir, num_epochs=10, batch_size=4, lr=0.005):
     print(f"✓ Val samples: {len(val_dataset)}")
     
     # Create model
-    print("\n🧠 Creating model...")
-    model = get_detection_model(num_classes=81)  # 80 food classes + background
+    class_names = load_class_names()
+    num_classes = len(class_names) + 1
+    print(f"\n🧠 Creating model with {num_classes} classes ({len(class_names)} food labels + background)")
+    model = get_detection_model(num_classes=num_classes)
     model = model.to(device)
     
     # Optimizer
