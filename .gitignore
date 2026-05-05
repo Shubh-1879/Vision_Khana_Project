@@ -11,5 +11,7 @@ dataset/khana/
 !dataset/labels.txt
 !dataset/taxonomy.csv
 step3_bev_transformation/data/natural_scenes/raw/
+pretrained_weights/
 *.DS_Store
 tmp_*.py
+*.docx
