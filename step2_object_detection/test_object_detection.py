@@ -1,89 +1,85 @@
-"""
-Khana Dataset - Object Detection Sanity Check
-Verify the detection training setup and model forward pass.
-"""
-
 import os
 import torch
+import cv2
 import torchvision
+from PIL import Image
+from torchvision.transforms.functional import to_tensor
 from torchvision.models.detection import fasterrcnn_resnet50_fpn
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
-from torchvision.transforms.functional import to_tensor
-from PIL import Image
-
 
 def get_project_root():
     return os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
-
 def load_class_names():
     labels_path = os.path.join(get_project_root(), 'dataset', 'labels.txt')
-    if not os.path.exists(labels_path):
-        raise FileNotFoundError(f'labels.txt not found at {labels_path}')
-    with open(labels_path, 'r', encoding='utf-8') as f:
+    with open(labels_path, 'r') as f:
         return [line.strip() for line in f if line.strip()]
 
+def get_model(num_classes):
+    try:
+        model = fasterrcnn_resnet50_fpn(weights="DEFAULT")
+    except:
+        model = fasterrcnn_resnet50_fpn(pretrained=True)
 
-def get_detection_model(num_classes=None):
-    if num_classes is None:
-        num_classes = len(load_class_names()) + 1
-
-    model = fasterrcnn_resnet50_fpn(weights=torchvision.models.detection.FasterRCNN_ResNet50_FPN_Weights.COCO_V1)
     in_features = model.roi_heads.box_predictor.cls_score.in_features
     model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
     return model
 
+def main():
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def sanity_check_data_dirs():
-    root = get_project_root()
-    base_dir = os.path.join(root, 'step2_object_detection', 'thali_detection')
-    required_dirs = [
-        os.path.join(base_dir, 'images', 'train'),
-        os.path.join(base_dir, 'images', 'val'),
-        os.path.join(base_dir, 'images', 'test'),
-        os.path.join(base_dir, 'annotations', 'train'),
-        os.path.join(base_dir, 'annotations', 'val'),
-        os.path.join(base_dir, 'annotations', 'test')
-    ]
-    missing = [d for d in required_dirs if not os.path.isdir(d)]
-    if missing:
-        print('[WARNING] Missing required directories:')
-        for path in missing:
-            print('  -', path)
-        return False
-    print('[OK] Object detection directories are present')
-    return True
+    class_names = load_class_names()
+    num_classes = 6
 
+    model = get_model(num_classes)
 
-def sanity_check_model():
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = get_detection_model()
-    model = model.to(device)
+    model_path = "thali_detection/models/best_detection_model.pth"
+    model.load_state_dict(torch.load(model_path, map_location=device))
+    model.to(device)
     model.eval()
 
-    dummy_image = torch.rand(3, 512, 512).to(device)
-    with torch.no_grad():
-        output = model([dummy_image])
+    input_dir = "thali_detection/images/test"
+    output_dir = "outputs"
+    os.makedirs(output_dir, exist_ok=True)
 
-    if isinstance(output, list) and len(output) == 1:
-        print('[OK] Model forward pass succeeded')
-        print(f'  Output keys: {list(output[0].keys())}')
-        return True
-    print('[ERROR] Model forward pass failed')
-    return False
+    for img_name in os.listdir(input_dir):
+        img_path = os.path.join(input_dir, img_name)
+
+        image = Image.open(img_path).convert("RGB")
+        img_tensor = to_tensor(image).to(device)
+
+        with torch.no_grad():
+            outputs = model([img_tensor])[0]
+
+        img_cv = cv2.cvtColor(cv2.imread(img_path), cv2.COLOR_BGR2RGB)
+
+    # DEBUG (print once per image)
+    print("Scores:", outputs['scores'])
+    print("Boxes:", outputs['boxes'])
+
+    for box, label, score in zip(outputs['boxes'], outputs['labels'], outputs['scores']):
+        if score < 0.05:
+            continue
+
+        x1, y1, x2, y2 = map(int, box.cpu().numpy())
+        label_name = class_names[label - 1]
+
+        cv2.rectangle(img_cv, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        cv2.putText(
+            img_cv,
+            f"{label_name} {score:.2f}",
+            (x1, y1 - 5),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.5,
+            (0, 255, 0),
+            1
+        )
+
+    out_path = os.path.join(output_dir, img_name)
+    cv2.imwrite(out_path, cv2.cvtColor(img_cv, cv2.COLOR_RGB2BGR))
 
 
-def main():
-    print('STEP 2 SANITY CHECK')
-    print('='*50)
-    data_ok = sanity_check_data_dirs()
-    model_ok = sanity_check_model()
+    print("Inference complete. Check outputs/ folder.")
 
-    if data_ok and model_ok:
-        print('\n[OK] Step 2 object detection framework is ready')
-    else:
-        print('\n[WARNING] Fix the issues above before training')
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
