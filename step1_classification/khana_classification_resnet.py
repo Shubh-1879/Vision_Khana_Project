@@ -1,6 +1,7 @@
 """
 Khana Dataset Classification - ResNet50 Fine-tuning Script
-Fine-tunes pretrained ResNet50 to classify 80 Indian food classes with target accuracy >91%
+Fine-tunes pretrained ResNet50 to classify 80 Indian food classes.
+Updated for HPC: AdamW, 30 Epochs, num_workers=32, pin_memory=True, and fixed val leakage.
 """
 
 import sys
@@ -10,7 +11,7 @@ import torch
 import torchvision
 import torchvision.transforms as transforms
 from torchvision.datasets import ImageFolder
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Subset, Dataset
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -41,37 +42,89 @@ root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 # Set data path
 data_path = os.path.join(root_dir, 'dataset', 'khana')
 
-# Define transforms
-transform = transforms.Compose([
+# Define SEPARATE transforms to fix data leakage
+# Train gets heavy augmentations, Val gets only resize/normalize
+train_transform = transforms.Compose([
     transforms.RandomResizedCrop(224),
     transforms.RandomHorizontalFlip(),
-    transforms.ColorJitter(),
-    transforms.RandomRotation(),
-    transforms.RandomPerspective(),
-    transforms.RandomAffine(),
-    transforms.GaussianBlur(),
-    transforms.RandomErasing(),
+    transforms.RandomRotation(20),
+    transforms.ColorJitter(
+        brightness=0.3,
+        contrast=0.3,
+        saturation=0.3,
+        hue=0.1
+    ),
+    transforms.RandomPerspective(distortion_scale=0.2, p=0.5),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    transforms.RandomErasing(p=0.25)
 ])
 
-# Load dataset
-print("Loading dataset...")
-dataset = ImageFolder(root=data_path, transform=transform, loader=safe_pil_loader)
+val_transform = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+])
 
-# Split into train and val (80-20)
-train_size = int(0.8 * len(dataset))
-val_size = len(dataset) - train_size
-train_dataset, val_dataset = torch.utils.data.random_split(dataset, [train_size, val_size])
+# Custom Wrapper to apply transforms AFTER splitting
+class DatasetWrapper(Dataset):
+    def __init__(self, subset, transform=None):
+        self.subset = subset
+        self.transform = transform
+        
+    def __getitem__(self, index):
+        x, y = self.subset[index]
+        if self.transform:
+            x = self.transform(x)
+        return x, y
+        
+    def __len__(self):
+        return len(self.subset)
 
-# Data loaders
-train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+# Load base dataset (NO transforms yet)
+print("Loading dataset metadata...")
+base_dataset = ImageFolder(root=data_path, loader=safe_pil_loader)
 
-print(f'Num classes: {len(dataset.classes)}')
+# Calculate split sizes
+train_size = int(0.8 * len(base_dataset))
+val_size = len(base_dataset) - train_size
+
+# Generate random indices for the split
+generator = torch.Generator().manual_seed(42) # Seed for reproducibility
+indices = torch.randperm(len(base_dataset), generator=generator).tolist()
+train_indices = indices[:train_size]
+val_indices = indices[train_size:]
+
+# Create subsets and wrap them with their respective transforms
+train_subset = Subset(base_dataset, train_indices)
+val_subset = Subset(base_dataset, val_indices)
+
+train_dataset = DatasetWrapper(train_subset, transform=train_transform)
+val_dataset = DatasetWrapper(val_subset, transform=val_transform)
+
+# Data loaders - HPC OPTIMIZED
+train_loader = DataLoader(
+    train_dataset, 
+    batch_size=32, 
+    shuffle=True, 
+    num_workers=32, 
+    pin_memory=True
+)
+val_loader = DataLoader(
+    val_dataset, 
+    batch_size=32, 
+    shuffle=False, 
+    num_workers=32, 
+    pin_memory=True
+)
+
+print(f'Num classes: {len(base_dataset.classes)}')
 print(f'Train size: {len(train_dataset)}, Val size: {len(val_dataset)}')
 
 # Load pretrained ResNet50 and fine-tune for 80 classes
 print("Loading pretrained ResNet50...")
-num_classes = len(dataset.classes)
+num_classes = len(base_dataset.classes)
 model = torchvision.models.resnet50(pretrained=False)  # Load architecture only
 
 # Load pretrained weights from local file
@@ -100,10 +153,14 @@ model = model.to(device)
 
 # Loss, optimizer, scheduler
 criterion = torch.nn.CrossEntropyLoss()
-# Only optimize unfrozen parameters (layer3, layer4, and fc)
+# Only optimize unfrozen parameters
 params_to_optimize = [p for p in model.parameters() if p.requires_grad]
-optimizer = torch.optim.Adam(params_to_optimize, lr=0.0001)  # Lower LR for fine-tuning
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=2, gamma=0.5)
+
+# UPDATED: AdamW optimizer for better weight decay handling
+optimizer = torch.optim.AdamW(params_to_optimize, lr=0.0001, weight_decay=0.01)
+
+# UPDATED: Adjusted step_size to 10 to accommodate 30 epochs
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.5)
 
 print(f'Device: {device}')
 print(f'Trainable parameters: {sum(p.numel() for p in model.parameters() if p.requires_grad)}')
@@ -149,7 +206,8 @@ print("Starting ResNet50 Fine-tuning Training...")
 print("="*60 + "\n")
 sys.stdout.flush()
 
-num_epochs = 10
+# UPDATED: 30 Epochs
+num_epochs = 30
 best_val_acc = 0.0
 
 for epoch in range(num_epochs):
@@ -174,9 +232,12 @@ print("\n" + "="*60)
 print("ResNet50 Fine-tuning Complete!")
 print("="*60 + "\n")
 sys.stdout.flush()
+
+# Load the best weights before final eval just to be sure we report the peak
+model.load_state_dict(torch.load(os.path.join(root_dir, 'step1_classification', 'best_model_resnet.pth')))
 _, final_val_acc = validate_epoch(model, val_loader, criterion, device)
-print(f'Final Validation Accuracy: {final_val_acc:.2f}%')
-print(f'Best Validation Accuracy: {best_val_acc:.2f}%')
+
+print(f'Final Best Validation Accuracy: {final_val_acc:.2f}%')
 sys.stdout.flush()
 
 if final_val_acc > 91:
