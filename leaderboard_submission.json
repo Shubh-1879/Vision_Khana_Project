@@ -1,0 +1,133 @@
+{
+  "team_name": "Vision_Khana_Project",
+  "submission_date": "2026-05-07 14:51:58",
+  "model_used": "ResNet50_FineTuned",
+  "validation_accuracy": 0.0,
+  "test_predictions": [
+    {
+      "image_path": "biryani.jpg",
+      "predicted_class": "biryani",
+      "confidence": 78.6342978477478
+    },
+    {
+      "image_path": "chaas.jpg",
+      "predicted_class": "chaas",
+      "confidence": 99.96416568756104
+    },
+    {
+      "image_path": "chana masala.jpg",
+      "predicted_class": "chana masala",
+      "confidence": 99.96299743652344
+    },
+    {
+      "image_path": "chicken wings.jpg",
+      "predicted_class": "chicken wings",
+      "confidence": 99.71489310264587
+    },
+    {
+      "image_path": "chikki.jpg",
+      "predicted_class": "chikki",
+      "confidence": 99.94063377380371
+    },
+    {
+      "image_path": "chole bhature.jpg",
+      "predicted_class": "chole bhature",
+      "confidence": 99.9474823474884
+    },
+    {
+      "image_path": "dabeli.jpg",
+      "predicted_class": "dabeli",
+      "confidence": 99.96286630630493
+    },
+    {
+      "image_path": "dal khichdi.jpg",
+      "predicted_class": "idli",
+      "confidence": 55.65953850746155
+    },
+    {
+      "image_path": "dhokla.jpg",
+      "predicted_class": "dhokla",
+      "confidence": 99.86250400543213
+    },
+    {
+      "image_path": "falooda.jpg",
+      "predicted_class": "falooda",
+      "confidence": 98.12306761741638
+    },
+    {
+      "image_path": "fish curry.jpg",
+      "predicted_class": "fish curry",
+      "confidence": 99.99953508377075
+    },
+    {
+      "image_path": "gajar ka halwa.jpg",
+      "predicted_class": "gajar ka halwa",
+      "confidence": 99.14182424545288
+    },
+    {
+      "image_path": "garlic bread.jpg",
+      "predicted_class": "garlic bread",
+      "confidence": 99.99773502349854
+    },
+    {
+      "image_path": "gulab jamun.jpg",
+      "predicted_class": "gulab jamun",
+      "confidence": 99.99531507492065
+    },
+    {
+      "image_path": "medu vada.jpg",
+      "predicted_class": "medu vada",
+      "confidence": 99.89421963691711
+    },
+    {
+      "image_path": "murukku.jpg",
+      "predicted_class": "murukku",
+      "confidence": 95.2376127243042
+    },
+    {
+      "image_path": "palak paneer.jpg",
+      "predicted_class": "palak paneer",
+      "confidence": 99.98596906661987
+    },
+    {
+      "image_path": "paneer masala.jpg",
+      "predicted_class": "paneer masala",
+      "confidence": 99.4502067565918
+    },
+    {
+      "image_path": "paniyaram.jpg",
+      "predicted_class": "paniyaram",
+      "confidence": 99.99781847000122
+    },
+    {
+      "image_path": "patrode.jpg",
+      "predicted_class": "patrode",
+      "confidence": 99.99926090240479
+    },
+    {
+      "image_path": "pav bhaji.jpg",
+      "predicted_class": "pav bhaji",
+      "confidence": 99.99375343322754
+    },
+    {
+      "image_path": "poha.jpg",
+      "predicted_class": "poha",
+      "confidence": 99.27001595497131
+    },
+    {
+      "image_path": "pongal.jpg",
+      "predicted_class": "pongal",
+      "confidence": 99.89674091339111
+    },
+    {
+      "image_path": "samosa.jpg",
+      "predicted_class": "samosa",
+      "confidence": 99.99985694885254
+    },
+    {
+      "image_path": "thali.jpg",
+      "predicted_class": "thali",
+      "confidence": 99.74831938743591
+    }
+  ]
+}

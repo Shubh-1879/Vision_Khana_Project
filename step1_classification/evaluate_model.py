@@ -84,7 +84,7 @@ def evaluate_on_test_images(model, test_image_paths, class_names, device='cpu'):
 
             print(f"Image: {os.path.basename(img_path)}")
             print(f"  Prediction: {predicted_label}")
-            print(".2f")
+            print(f"  Confidence: {confidence_pct:.2f}%")
             print("-"*40)
 
         except Exception as e:
@@ -121,24 +121,21 @@ def main():
         print("Cannot proceed without model")
         return
 
-    # TODO: Replace with actual test image paths
-    # For now, create a placeholder - user needs to provide actual test images
-    test_image_paths = [
-        # Add paths to your 20-30 test images here
-        # Example: "<repo_root>/step1_classification/test_images/image1.jpg"
-    ]
+    # Find test images automatically from the 'test_images' directory
+    test_dir = os.path.join(root_dir, 'step1_classification', 'test_images')
+    test_image_paths = []
+    if os.path.isdir(test_dir):
+        test_image_paths = [os.path.join(test_dir, f) for f in os.listdir(test_dir)
+                            if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
 
     if not test_image_paths:
         print("\n" + "="*60)
         print("TEST IMAGE SETUP REQUIRED")
         print("="*60)
-        print("Please add paths to your 20-30 test images in the test_image_paths list")
-        print("Example:")
-        print('test_image_paths = [')
-        print(f'    "{os.path.join(root_dir, "step1_classification", "test_images", "aloo_gobi_001.jpg")}",')
-        print(f'    "{os.path.join(root_dir, "step1_classification", "test_images", "chana_masala_002.jpg")}",')
-        print('    # ... add more test images')
-        print(']')
+        print(f"No test images found in the directory: {test_dir}")
+        print("Please add 20-30 test images to that folder.")
+        print("You can create the folder and get instructions by running:")
+        print("python step1_classification/setup_test_images.py")
         print("\nOnce test images are ready, run this script again.")
         return
 
