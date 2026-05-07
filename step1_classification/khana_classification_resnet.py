@@ -43,9 +43,14 @@ data_path = os.path.join(root_dir, 'dataset', 'khana')
 
 # Define transforms
 transform = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    transforms.RandomResizedCrop(224),
+    transforms.RandomHorizontalFlip(),
+    transforms.ColorJitter(),
+    transforms.RandomRotation(),
+    transforms.RandomPerspective(),
+    transforms.RandomAffine(),
+    transforms.GaussianBlur(),
+    transforms.RandomErasing(),
 ])
 
 # Load dataset
@@ -144,7 +149,7 @@ print("Starting ResNet50 Fine-tuning Training...")
 print("="*60 + "\n")
 sys.stdout.flush()
 
-num_epochs = 3
+num_epochs = 10
 best_val_acc = 0.0
 
 for epoch in range(num_epochs):
