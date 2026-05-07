@@ -96,12 +96,15 @@ def get_detection_model(num_classes=None):
         class_names = load_class_names()
         num_classes = len(class_names) + 1
 
-    model = fasterrcnn_resnet50_fpn(weights=torchvision.models.detection.FasterRCNN_ResNet50_FPN_Weights.COCO_V1)
-    
+    try:
+        model = fasterrcnn_resnet50_fpn(weights="DEFAULT")
+    except Exception:
+        model = fasterrcnn_resnet50_fpn(pretrained=True)
+
     # Replace classifier
     in_features = model.roi_heads.box_predictor.cls_score.in_features
     model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
-    
+
     return model
 
 
@@ -138,24 +141,26 @@ def train_one_epoch(model, train_loader, optimizer, device, epoch, num_epochs):
 
 
 @torch.no_grad()
-def evaluate(model, val_loader, device, epoch, num_epochs):
-    """Evaluate model on validation set"""
-    model.eval()
-    total_loss = 0
-    
-    pbar = tqdm(val_loader, desc=f'Epoch {epoch+1}/{num_epochs} [Val]')
-    
-    for images, targets in pbar:
-        images = [img.to(device) for img in images]
-        targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
-        
-        # Get predictions
-        predictions = model(images)
-        
-        pbar.set_postfix({'images': len(images)})
-    
-    return total_loss
 
+def evaluate(model, val_loader, device, epoch, num_epochs):
+    model.train()  # IMPORTANT: keep train mode for loss
+    total_loss = 0
+
+    pbar = tqdm(val_loader, desc=f'Epoch {epoch+1}/{num_epochs} [Val]')
+
+    with torch.no_grad():
+        for images, targets in pbar:
+            images = [img.to(device) for img in images]
+            targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
+
+            loss_dict = model(images, targets)
+            loss = sum(loss_dict.values())
+
+            total_loss += loss.item()
+
+            pbar.set_postfix({'loss': loss.item()})
+
+    return total_loss
 
 def train_detection_model(data_dir, num_epochs=10, batch_size=4, lr=0.005):
     """Main training function"""
@@ -225,7 +230,8 @@ def train_detection_model(data_dir, num_epochs=10, batch_size=4, lr=0.005):
     
     model_dir = os.path.join(data_dir, 'models')
     best_model_path = os.path.join(model_dir, 'best_detection_model.pth')
-    
+    os.makedirs(os.path.dirname(best_model_path), exist_ok=True)
+
     for epoch in range(num_epochs):
         print(f"\n--- Epoch {epoch+1}/{num_epochs} ---")
         

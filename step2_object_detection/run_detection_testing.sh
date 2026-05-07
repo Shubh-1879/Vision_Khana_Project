@@ -1,8 +1,8 @@
 #PBS -N thali_detection_training
 #PBS -l ncpus=16
 #PBS -q gpu
-#PBS -e detection_training_error.log
-#PBS -o detection_training_output.log
+#PBS -e detection_testing_error.log
+#PBS -o detection_testing_output.log
 
 # Change to project directory
 cd $PBS_O_WORKDIR || exit 1
@@ -11,4 +11,4 @@ cd $PBS_O_WORKDIR || exit 1
 module load compiler/anaconda3
 
 # Run with unbuffered output for real-time logging
-python3 -u train_object_detection.py
+python3 -u test_object_detection.py
