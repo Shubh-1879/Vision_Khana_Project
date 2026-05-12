@@ -15,3 +15,8 @@ pretrained_weights/
 *.DS_Store
 tmp_*.py
 *.docx
+
+# Ignore Heavy Models and YOLO outputs
+step1_classification/best_model_resnet.pth
+step2_object_detection/yolov8n.pt
+step2_object_detection/outputs/
