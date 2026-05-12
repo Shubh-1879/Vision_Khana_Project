@@ -4,7 +4,7 @@ This repository contains a robust computer vision pipeline designed to classify 
 
 The project is structured into progressive steps, currently completing **Step 1 (Image Classification)** and **Step 2 (Object Detection)** using a highly optimized, two-stage YOLOv8 + ResNet50 architecture.
 
-## 🗂️ Repository Structure
+## Repository Structure
 
 ```text
 ├── dataset/
