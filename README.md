@@ -1,34 +1,21 @@
-# Vision_Khana_Project
+# Khana Dataset: Indian Cuisine Computer Vision Project
 
-This repository is organized into two separate parts:
+This repository contains a robust computer vision pipeline designed to classify and detect 80 different Indian food dishes from the Khana dataset. 
 
-- `step1_classification/`: ResNet50-based food classification for 80 Khana classes.
-- `step2_object_detection/`: Thali object detection setup and training using Faster R-CNN.
-- `shared/`: Common utilities and status tracking.
+The project is structured into progressive steps, currently completing **Step 1 (Image Classification)** and **Step 2 (Object Detection)** using a highly optimized, two-stage YOLOv8 + ResNet50 architecture.
 
-## Directory structure
+## 🗂️ Repository Structure
 
-```
-Vision_Khana_Project/
-├── README.md
-├── dataset/                    # Classification dataset
-├── pretrained_weights/         # Local pretrained model weights
-├── shared/                    # Shared scripts and status files
-│   ├── download_weights.py
-│   ├── project_status.py
-│   └── rename.py
-├── step1_classification/      # ResNet50 classification step
+```text
+├── dataset/
+│   ├── labels.txt                 # The 80 Khana food classes
+│   └── taxonomy.csv
+├── step1_classification/          # Image Classification (Baseline > 91%)
 │   ├── khana_classification_resnet.py
-│   ├── analyze_results.py
-│   ├── evaluate_model.py
-│   ├── run_resnet.sh
-│   ├── setup_test_images.py
-│   └── test_images/
-└── step2_object_detection/    # Thali object detection step
-    ├── annotation_helper.py
-    ├── setup_object_detection.py
-    ├── train_object_detection.py
-    ├── test_object_detection.py
-    ├── run_detection_training.sh
-    └── thali_detection/
-```
+│   └── run_resnet.sh              # HPC submission script
+├── step2_object_detection/        # Thali Object Detection
+│   ├── train_yolo.py              # Fine-tunes YOLOv8n on custom thali items
+│   ├── task2_yolo_classifier.py   # Full pipeline: Detects -> Crops -> Classifies
+│   ├── yolo_dataset/              # YOLO formatted training data
+│   └── outputs/                   # Final bounded images
+└── README.md
