@@ -1,0 +1,4 @@
+train: images/train
+val: images/train  # We are pointing val to train just for this tiny 15-image dataset!
+nc: 1
+names: ['food']
