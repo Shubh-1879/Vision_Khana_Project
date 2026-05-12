@@ -24,7 +24,7 @@ def load_best_models():
     if os.path.exists(resnet_path):
         print("Loading ResNet50 model...")
         # Recreate ResNet50 architecture and load state_dict
-        model = torchvision.models.resnet50(pretrained=False)
+        model = torchvision.models.resnet50(weights=None)
         # Freeze early layers (same as training)
         for param in model.layer1.parameters():
             param.requires_grad = False
@@ -37,9 +37,9 @@ def load_best_models():
         state_dict = torch.load(resnet_path, map_location='cpu')
         model.load_state_dict(state_dict)
         models['resnet50'] = model
-        print("✓ ResNet50 model loaded")
+        print("ResNet50 model loaded")
     else:
-        print("✗ ResNet50 model not found")
+        print("ResNet50 model not found")
 
     return models
 
@@ -101,14 +101,14 @@ def generate_report():
     print("TRAINING RESULTS:")
     for model_name, results in training_results.items():
         print(f"  {model_name}:")
-        print(".2f")
+        print(f"    Final Validation Accuracy: {results['final_val_acc']:.2f}%")
         print(f"    Status: {results['status']}")
         print()
 
     # Load models for evaluation
     models = load_best_models()
     if not models:
-        print("❌ No trained models found!")
+        print("No trained models found!")
         return
 
     # Check for test images
@@ -119,7 +119,7 @@ def generate_report():
                       if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
     else:
         test_images = []
-        print(f"⚠️  No test images found in {os.path.join(root_dir, 'step1_classification', 'test_images')}")
+        print(f"No test images found in {os.path.join(root_dir, 'step1_classification', 'test_images')}")
         print("   Please add 20-30 test images for evaluation")
 
     if test_images:
@@ -148,8 +148,8 @@ def generate_report():
         with open(submission_file, 'w') as f:
             json.dump(submission, f, indent=2)
 
-        print(f"\n✓ Leaderboard submission saved: {submission_file}")
-        print(".2f")
+        print(f"\nLeaderboard submission saved: {submission_file}")
+        print(f"   Validation Accuracy in Report: {submission['validation_accuracy']:.2f}%")
         print(f"   Test predictions: {len(test_results)}")
 
     # Next steps
@@ -158,15 +158,15 @@ def generate_report():
 
     success_count = sum(1 for r in training_results.values() if r['status'] == 'SUCCESS')
     if success_count > 0:
-        print("✅ Step 1 COMPLETE: Achieved >91% validation accuracy")
-        print("   → Proceed to Step 2: Object Detection")
-        print("   → Run: python ../step2_object_detection/setup_object_detection.py")
+        print("Step 1 COMPLETE: Achieved >91% validation accuracy")
+        print("   -> Proceed to Step 2: Object Detection")
+        print("   -> Run: python ../step2_object_detection/train_yolo.py")
     else:
-        print("❌ Step 1 INCOMPLETE: Below 91% baseline")
-        print("   → Increase epochs, adjust learning rate, or try different architecture")
-        print("   → Consider data augmentation or transfer learning")
+        print("Step 1 INCOMPLETE: Below 91% baseline")
+        print("   -> Increase epochs, adjust learning rate, or try different architecture")
+        print("   -> Consider data augmentation or transfer learning")
 
-    print("\n📊 Files generated:")
+    print("\nFiles generated:")
     print("   - leaderboard_submission.json (for submission)")
     print("   - evaluation_results.json (detailed test results)")
     print("   - project_status.json (updated project status)")
