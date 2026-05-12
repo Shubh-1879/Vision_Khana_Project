@@ -5,21 +5,16 @@ Analyzes trained models and prepares leaderboard submission
 
 import torch
 import torchvision
-import torchvision.transforms as transforms
-from torchvision.datasets import ImageFolder
-from torch.utils.data import DataLoader
 import os
 import json
-import sys
 from datetime import datetime
 
-# Add step1_classification to sys.path to import evaluate_model
-sys.path.append(os.path.join(os.path.dirname(__file__), 'step1_classification'))
+# Since this file is now in the same folder as evaluate_model.py, we can import it directly!
 from evaluate_model import evaluate_on_test_images
 
 def get_project_root():
-    """Helper to find the project root directory."""
-    return os.path.abspath(os.path.join(os.path.dirname(__file__), '.'))
+    """Helper to find the project root directory (one folder up)."""
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 def load_best_models():
     """Load the best trained ResNet50 model"""
@@ -31,7 +26,7 @@ def load_best_models():
     if os.path.exists(resnet_path):
         print("Loading ResNet50 model...")
         # Recreate ResNet50 architecture and load state_dict
-        model = torchvision.models.resnet50(pretrained=False)
+        model = torchvision.models.resnet50(weights=None)
         # Freeze early layers (same as training)
         for param in model.layer1.parameters():
             param.requires_grad = False
@@ -44,9 +39,9 @@ def load_best_models():
         state_dict = torch.load(resnet_path, map_location='cpu')
         model.load_state_dict(state_dict)
         models['resnet50'] = model
-        print("ResNet50 model loaded")
+        print("✓ ResNet50 model loaded")
     else:
-        print(f"ResNet50 model not found at: {resnet_path}")
+        print(f"✗ ResNet50 model not found at: {resnet_path}")
 
     return models
 
@@ -116,7 +111,7 @@ def generate_report():
     # Load models for evaluation
     models = load_best_models()
     if not models:
-        print("No trained models found!")
+        print("❌ No trained models found!")
         return
 
     root_dir = get_project_root()
@@ -128,7 +123,7 @@ def generate_report():
                       if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
     else:
         test_images = []
-        print(f"No test images found in {test_images_dir}")
+        print(f"⚠️  No test images found in {test_images_dir}")
         print("   Please add 20-30 test images for evaluation")
 
     if test_images:
@@ -152,12 +147,12 @@ def generate_report():
         # Prepare leaderboard submission
         submission = prepare_leaderboard_submission(training_results, test_results)
 
-        # Save submission
+        # Save submission to the main project folder
         submission_file = os.path.join(root_dir, 'leaderboard_submission.json')
         with open(submission_file, 'w') as f:
             json.dump(submission, f, indent=2)
 
-        print(f"\nLeaderboard submission saved: {submission_file}")
+        print(f"\n✓ Leaderboard submission saved: {submission_file}")
         print(f"   Validation Accuracy in Report: {submission['validation_accuracy']:.2f}%")
         print(f"   Test predictions: {len(test_results)}")
 
@@ -167,18 +162,11 @@ def generate_report():
 
     success_count = sum(1 for r in training_results.values() if r['status'] == 'SUCCESS')
     if success_count > 0:
-        print("Step 1 COMPLETE: Achieved >91% validation accuracy")
+        print("✅ Step 1 COMPLETE: Achieved >91% validation accuracy")
         print("   -> Proceed to Step 2: Object Detection")
-        print("   -> Run: python setup_object_detection.py")
     else:
-        print("Step 1 INCOMPLETE: Below 91% baseline")
+        print("❌ Step 1 INCOMPLETE: Below 91% baseline")
         print("   -> Increase epochs, adjust learning rate, or try different architecture")
-        print("   -> Consider data augmentation or transfer learning")
-
-    print("\nFiles generated:")
-    print("   - leaderboard_submission.json (for submission)")
-    print("   - evaluation_results.json (detailed test results)")
-    print("   - project_status.json (updated project status)")
 
 def main():
     generate_report()
