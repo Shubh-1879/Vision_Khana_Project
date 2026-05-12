@@ -44,9 +44,9 @@ def load_best_models():
         state_dict = torch.load(resnet_path, map_location='cpu')
         model.load_state_dict(state_dict)
         models['resnet50'] = model
-        print("✓ ResNet50 model loaded")
+        print("ResNet50 model loaded")
     else:
-        print(f"✗ ResNet50 model not found at: {resnet_path}")
+        print(f"ResNet50 model not found at: {resnet_path}")
 
     return models
 
@@ -116,7 +116,7 @@ def generate_report():
     # Load models for evaluation
     models = load_best_models()
     if not models:
-        print("❌ No trained models found!")
+        print("No trained models found!")
         return
 
     root_dir = get_project_root()
@@ -128,7 +128,7 @@ def generate_report():
                       if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
     else:
         test_images = []
-        print(f"⚠️  No test images found in {test_images_dir}")
+        print(f"No test images found in {test_images_dir}")
         print("   Please add 20-30 test images for evaluation")
 
     if test_images:
@@ -157,7 +157,7 @@ def generate_report():
         with open(submission_file, 'w') as f:
             json.dump(submission, f, indent=2)
 
-        print(f"\n✓ Leaderboard submission saved: {submission_file}")
+        print(f"\nLeaderboard submission saved: {submission_file}")
         print(f"   Validation Accuracy in Report: {submission['validation_accuracy']:.2f}%")
         print(f"   Test predictions: {len(test_results)}")
 
@@ -167,15 +167,15 @@ def generate_report():
 
     success_count = sum(1 for r in training_results.values() if r['status'] == 'SUCCESS')
     if success_count > 0:
-        print("✅ Step 1 COMPLETE: Achieved >91% validation accuracy")
-        print("   → Proceed to Step 2: Object Detection")
-        print("   → Run: python setup_object_detection.py")
+        print("Step 1 COMPLETE: Achieved >91% validation accuracy")
+        print("   -> Proceed to Step 2: Object Detection")
+        print("   -> Run: python setup_object_detection.py")
     else:
-        print("❌ Step 1 INCOMPLETE: Below 91% baseline")
-        print("   → Increase epochs, adjust learning rate, or try different architecture")
-        print("   → Consider data augmentation or transfer learning")
+        print("Step 1 INCOMPLETE: Below 91% baseline")
+        print("   -> Increase epochs, adjust learning rate, or try different architecture")
+        print("   -> Consider data augmentation or transfer learning")
 
-    print("\n📊 Files generated:")
+    print("\nFiles generated:")
     print("   - leaderboard_submission.json (for submission)")
     print("   - evaluation_results.json (detailed test results)")
     print("   - project_status.json (updated project status)")
